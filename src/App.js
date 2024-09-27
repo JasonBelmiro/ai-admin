@@ -1,10 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 
 function App() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const adjustHeight = (element) => {
+    element.style.height = "auto";
+    const scrollHeight = element.scrollHeight;
+    const maxHeight = 100;
+    
+    element.style.height = scrollHeight <= maxHeight ? `${scrollHeight}px` : `${maxHeight}px`;
+  
+    if (scrollHeight > 100) {
+      element.style.overflowY = 'scroll';
+    } else {
+      element.style.overflowY = 'hidden';
+    }
+  };    
 
   const send = async () => {
     if (input.trim()) {
@@ -39,7 +64,7 @@ function App() {
                     <img
                       src={data.response.image}
                       alt="Response Image"
-                      style={{ display: "block", margin: "0 auto" }}
+                      style={{ display: "block", margin: "0 auto", width: "30%" }}
                     />
                   </a>
                   <p style={{ textAlign: "justify" }}>{data.response.text}</p>
@@ -55,16 +80,41 @@ function App() {
             { text: data.response.text, isUser: false },
           ]);
         }
-      } catch (error) {
+      } 
+      // catch (error) {
+      //   console.error("Error fetching data:", error);
+      //   setMessages((prevMessages) => [
+      //     ...prevMessages,
+      //     { text: "Sorry, something went wrong.", isUser: false },
+      //   ]);
+      // }
+      catch (error) {
         console.error("Error fetching data:", error);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: "Sorry, something went wrong.", isUser: false },
+          {
+            content: (
+              <div>
+                <img
+                  src="/icon.png"
+                  alt="Error Icon"
+                  style={{ display: "block", margin: "0 auto", width: "30%" }}
+                />
+                <p>
+                  Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.
+                </p>
+              </div>
+            ),
+            isUser: false,
+          },
         ]);
       }
-
       setIsLoading(false); // Selesai loading
       setInput("");
+      adjustHeight(inputRef.current);
+      
+      inputRef.current.style.height = "auto";
+      inputRef.current.style.overflowY = "hidden";
     }
   };
 
@@ -83,6 +133,7 @@ function App() {
               {msg.content || msg.text}
             </div>
           ))}
+          <div ref={messagesEndRef} />
           {isLoading && (
             // <div className="loading-icon">
             //   <img
@@ -95,13 +146,18 @@ function App() {
           )}
         </div>
         <div className="input-container">
-          <input
-            type="text"
+          <textarea
+            ref={inputRef}
+            rows="1"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              adjustHeight(e.target);
+            }}
             onKeyPress={(e) => e.key === "Enter" && send()}
             placeholder="Type your message..."
-            disabled={isLoading} // Nonaktifkan input saat loading
+            disabled={isLoading}
+            style={{ resize: 'none' }}
           />
           <button onClick={send} disabled={isLoading}>
             Send
