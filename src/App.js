@@ -81,34 +81,34 @@ function App() {
           ]);
         }
       } 
-      // catch (error) {
-      //   console.error("Error fetching data:", error);
-      //   setMessages((prevMessages) => [
-      //     ...prevMessages,
-      //     { text: "Sorry, something went wrong.", isUser: false },
-      //   ]);
-      // }
       catch (error) {
         console.error("Error fetching data:", error);
         setMessages((prevMessages) => [
           ...prevMessages,
-          {
-            content: (
-              <div>
-                <img
-                  src="/icon.png"
-                  alt="Error Icon"
-                  style={{ display: "block", margin: "0 auto", width: "30%" }}
-                />
-                <p>
-                  Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.
-                </p>
-              </div>
-            ),
-            isUser: false,
-          },
+          { text: "Sorry, something went wrong.", isUser: false },
         ]);
       }
+      // catch (error) {
+      //   console.error("Error fetching data:", error);
+      //   setMessages((prevMessages) => [
+      //     ...prevMessages,
+      //     {
+      //       content: (
+      //         <div>
+      //           <img
+      //             src="/icon.png"
+      //             alt="Error Icon"
+      //             style={{ display: "block", margin: "0 auto", width: "30%" }}
+      //           />
+      //           <p>
+      //             Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.
+      //           </p>
+      //         </div>
+      //       ),
+      //       isUser: false,
+      //     },
+      //   ]);
+      // }
       setIsLoading(false); // Selesai loading
       setInput("");
       adjustHeight(inputRef.current);
