@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./App.css";
+import "./index.css";
+import "./bootstrap.min.css";
 
 function App() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -21,24 +23,22 @@ function App() {
     element.style.height = "auto";
     const scrollHeight = element.scrollHeight;
     const maxHeight = 100;
-    
+
     element.style.height = scrollHeight <= maxHeight ? `${scrollHeight}px` : `${maxHeight}px`;
-  
+
     if (scrollHeight > 100) {
-      element.style.overflowY = 'scroll';
+      element.style.overflowY = "scroll";
     } else {
-      element.style.overflowY = 'hidden';
+      element.style.overflowY = "hidden";
     }
-  };    
+  };
 
   const send = async () => {
     if (input.trim()) {
-      // Menambahkan pesan pengguna ke state terlebih dahulu
       setMessages([...messages, { text: input, isUser: true }]);
-      setIsLoading(true); // Mulai loading
+      setIsLoading(true);
 
       try {
-        // Melakukan post request ke API
         const response = await fetch("http://localhost:5001/api/bot/run", {
           method: "POST",
           headers: {
@@ -50,7 +50,6 @@ function App() {
         const data = await response.json();
 
         if (data.response.image) {
-          // Jika respons mengandung gambar, tampilkan gambar dengan link dan teks di bawahnya
           setMessages((prevMessages) => [
             ...prevMessages,
             {
@@ -74,76 +73,84 @@ function App() {
             },
           ]);
         } else {
-          // Jika tidak ada gambar, hanya tampilkan teks
           setMessages((prevMessages) => [
             ...prevMessages,
             { text: data.response.text, isUser: false },
           ]);
         }
-      } 
-      catch (error) {
+      } catch (error) {
         console.error("Error fetching data:", error);
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: "Sorry, something went wrong.", isUser: false },
         ]);
       }
-      // catch (error) {
-      //   console.error("Error fetching data:", error);
-      //   setMessages((prevMessages) => [
-      //     ...prevMessages,
-      //     {
-      //       content: (
-      //         <div>
-      //           <img
-      //             src="/icon.png"
-      //             alt="Error Icon"
-      //             style={{ display: "block", margin: "0 auto", width: "30%" }}
-      //           />
-      //           <p>
-      //             Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.Sorry, something went wrong. Please try again later.
-      //           </p>
-      //         </div>
-      //       ),
-      //       isUser: false,
-      //     },
-      //   ]);
-      // }
-      setIsLoading(false); // Selesai loading
+
+      setIsLoading(false);
       setInput("");
       adjustHeight(inputRef.current);
-      
+
       inputRef.current.style.height = "auto";
       inputRef.current.style.overflowY = "hidden";
     }
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+    setInput("");
+  };
+
   return (
     <div>
       <div className="header">
+        <div className="left-icons">
+          <img
+            src="/sidebar.png"
+            alt="Toggle Sidebar"
+            onClick={toggleSidebar}
+            style={{ cursor: "pointer", height: "35px", marginLeft: "10px" }}
+          />
+          <img
+            src="/newchat.png"
+            alt="New Chat"
+            onClick={clearChat}
+            style={{ cursor: "pointer", height: "28px", marginLeft: "20px" }}
+          />
+        </div>
         <img src="/logo.png" alt="AI-DECE Logo" className="logo" />
       </div>
-      <div className="chat-container">
+      <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+        <ul>
+          <li>History 1</li>
+          <li>History 2</li>
+          <li>History 3</li>
+        </ul>
+      </div>
+      <div className={`chat-container main-content ${isSidebarOpen ? "sidebar-open" : ""}`}>
         <div className="messages-container">
           {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`message ${msg.isUser ? "user" : "response"}`}
-            >
-              {msg.content || msg.text}
-            </div>
+            <div key={index} className={`message-wrapper ${msg.isUser ? "user" : "response"}`}>
+              {!msg.isUser && (
+                <div className="avatar-wrapper bot-avatar">
+                  <img src="/bot.png" alt="Bot" className="avatar" />
+                </div>
+              )}
+              <div className={`message ${msg.isUser ? "user-message" : "response-message"}`}>
+                {msg.content || msg.text}
+              </div>
+              {msg.isUser && (
+                <div className="avatar-wrapper user-avatar">
+                  <img src="/user.png" alt="User" className="avatar" />
+                </div>
+              )}
+            </div>          
           ))}
           <div ref={messagesEndRef} />
-          {isLoading && (
-            // <div className="loading-icon">
-            //   <img
-            //     src="/loading.gif"
-            //     alt="Loading..."
-            //     style={{ display: "block", margin: "0 auto" }}
-            //   />
-            // </div>
-            <div className="loading-spinner"></div>
-          )}
+          {isLoading && <div className="loading-spinner"></div>}
         </div>
         <div className="input-container">
           <textarea
@@ -157,7 +164,7 @@ function App() {
             onKeyPress={(e) => e.key === "Enter" && send()}
             placeholder="Type your message..."
             disabled={isLoading}
-            style={{ resize: 'none' }}
+            style={{ resize: "none" }}
           />
           <button onClick={send} disabled={isLoading}>
             Send
