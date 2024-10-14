@@ -147,7 +147,7 @@ body {
   height: 30px;
   border-radius: 0;
   overflow: hidden;
-  object-fit: cover; 
+  object-fit: cover;
 }
 
 .bot-avatar {
@@ -247,7 +247,7 @@ button:hover {
   .messages-container {
     padding: 10px 15%;
   }
-  
+
   .message {
     max-width: 100%;
   }
@@ -255,7 +255,7 @@ button:hover {
   .user {
     max-width: 70%;
   }
-  
+
   .input-container {
     width: 75%;
   }
@@ -313,7 +313,8 @@ button:hover {
     font-size: 14px;
   }
 
-  .user, .response {
+  .user,
+  .response {
     margin-left: 0;
     margin-right: 0;
   }

@@ -24,7 +24,8 @@ function App() {
     const scrollHeight = element.scrollHeight;
     const maxHeight = 100;
 
-    element.style.height = scrollHeight <= maxHeight ? `${scrollHeight}px` : `${maxHeight}px`;
+    element.style.height =
+      scrollHeight <= maxHeight ? `${scrollHeight}px` : `${maxHeight}px`;
 
     if (scrollHeight > 100) {
       element.style.overflowY = "scroll";
@@ -63,7 +64,11 @@ function App() {
                     <img
                       src={data.response.image}
                       alt="Response Image"
-                      style={{ display: "block", margin: "0 auto", width: "30%" }}
+                      style={{
+                        display: "block",
+                        margin: "0 auto",
+                        width: "30%",
+                      }}
                     />
                   </a>
                   <p style={{ textAlign: "justify" }}>{data.response.text}</p>
@@ -130,16 +135,27 @@ function App() {
           <li>History 3</li>
         </ul>
       </div>
-      <div className={`chat-container main-content ${isSidebarOpen ? "sidebar-open" : ""}`}>
+      <div
+        className={`chat-container main-content ${
+          isSidebarOpen ? "sidebar-open" : ""
+        }`}
+      >
         <div className="messages-container">
           {messages.map((msg, index) => (
-            <div key={index} className={`message-wrapper ${msg.isUser ? "user" : "response"}`}>
+            <div
+              key={index}
+              className={`message-wrapper ${msg.isUser ? "user" : "response"}`}
+            >
               {!msg.isUser && (
                 <div className="avatar-wrapper bot-avatar">
                   <img src="/bot.png" alt="Bot" className="avatar" />
                 </div>
               )}
-              <div className={`message ${msg.isUser ? "user-message" : "response-message"}`}>
+              <div
+                className={`message ${
+                  msg.isUser ? "user-message" : "response-message"
+                }`}
+              >
                 {msg.content || msg.text}
               </div>
               {msg.isUser && (
@@ -147,7 +163,7 @@ function App() {
                   <img src="/user.png" alt="User" className="avatar" />
                 </div>
               )}
-            </div>          
+            </div>
           ))}
           <div ref={messagesEndRef} />
           {isLoading && <div className="loading-spinner"></div>}
