@@ -34,19 +34,31 @@ function App() {
     }
   };
 
+  // Function to split text by "\n" and render with line breaks
+  const renderTextWithLineBreaks = (text) => {
+    return text.split("\n").map((line, index) => (
+      <p key={index} style={{ margin: 0 }}>
+        {line}
+      </p>
+    ));
+  };
+
   const send = async () => {
     if (input.trim()) {
       setMessages([...messages, { text: input, isUser: true }]);
       setIsLoading(true);
 
       try {
-        const response = await fetch("http://localhost:5001/api/bot/run", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user_prompt: input }),
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_API_HOST}/api/bot/run`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_prompt: input }),
+          }
+        );
 
         const data = await response.json();
 
@@ -156,7 +168,7 @@ function App() {
                   msg.isUser ? "user-message" : "response-message"
                 }`}
               >
-                {msg.content || msg.text}
+                {msg.content ? msg.content : renderTextWithLineBreaks(msg.text)}
               </div>
               {msg.isUser && (
                 <div className="avatar-wrapper user-avatar">
