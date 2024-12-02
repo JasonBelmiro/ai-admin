@@ -10,6 +10,7 @@ function App() {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const overlayRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -109,6 +110,29 @@ function App() {
     setInput("");
   };
 
+  // Close sidebar when clicking outside it
+  const handleClickOutside = (event) => {
+    if (
+      isSidebarOpen &&
+      !event.target.closest(".sidebar") &&
+      !event.target.closest(".header .left-icons")
+    ) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+
   return (
     <div>
       <div className="header">
@@ -128,6 +152,10 @@ function App() {
         </div>
         <img src="/logo.png" alt="AI-DECE Logo" className="logo" />
       </div>
+      <div
+        className={`overlay ${isSidebarOpen ? "active" : ""}`}
+        ref={overlayRef}
+      />
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <ul>
           <li>History 1</li>
@@ -137,7 +165,7 @@ function App() {
       </div>
       <div
         className={`chat-container main-content ${
-          isSidebarOpen ? "sidebar-open" : ""
+          isSidebarOpen ? "sidebar-open disabled" : ""
         }`}
       >
         <div className="messages-container">
